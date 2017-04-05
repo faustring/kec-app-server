@@ -1,0 +1,25 @@
+{
+  "development": {
+    "database": {
+      "database": "",
+      "username": "",
+      "password": "",
+      "options": {
+        "dialect": "sqlite",
+        "storage": "db.sqlite"
+      }
+    }
+  },
+  "production": {
+    "database": {
+      "database": "faustring",
+      "username": "faustring",
+      "password": "1234",
+      "options": {
+        "host": "localhost",
+        "dialect": "mariadb",
+        "port": 3306
+      }
+    }
+  }
+}
