@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "sync": "node sync.js"
+    "sync": "node ./sync.js"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
