@@ -1,3 +1,6 @@
+const express = require('express')
+const router = express.Router()
+
 const models = require('../../models')
 
 function marshalUser(user) {
@@ -7,19 +10,16 @@ function marshalUser(user) {
   }
 }
 
-function getUser(req, res, next) {
+router.get('', (req, res, next) => {
   models.User.findAll()
     .then((users) => {
       const result = users.map((user, index) => {
         return marshalUser(user)
       })
-      console.log(result)
       res.json(result)
     }, (error) => {
       res.send('error')
     })
-}
+})
 
-module.exports = {
-  getUser
-}
+module.exports = router
