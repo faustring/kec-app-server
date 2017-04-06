@@ -19,9 +19,7 @@ app.use('/api/v0.1', api_v0_1);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  res.status(404).json({'code': 10001, 'message': 'not found'})
 });
 
 // error handler
