@@ -1,13 +1,15 @@
 const express = require('express')
 const router = express.Router()
+const t = require('tcomb-validation')
 
 const serializer = require('./serializer')
-const errorCode = require('./errorCode')
+const ErrorCode = require('./ErrorCode')
+const domain = require('./domain')
 const models = require('../../models')
 
 router.get('/:id', (req, res, next) => {
   /**
-   * @api {get} /user/:id Request User Information
+   * @api {get} /users/:id Request User Information
    * @apiName getUser
    * @apiGroup User
    * 
@@ -51,11 +53,22 @@ router.get('/:id', (req, res, next) => {
       if (user) {
         res.status(200).json(serializer.marshalUser(user))
       } else {
-        res.status(404).json(errorCode.user.unknownUser)
+        res.status(404).json(ErrorCode.user.unknownUser)
       }
     }, (error) => {
-      res.status(500).json(errorCode.common.unknown)
+      res.status(500).json(ErrorCode.common.unknown)
     })
+})
+
+router.post('', (req, res, next) => {
+  const data = req.body
+  const result = t.validate(data, domain.RegisterUser)
+  if (result.isValid()) {
+    console.log(result)
+  } else {
+    console.log(result.errors)
+  }
+  res.send('test')
 })
 
 module.exports = router
