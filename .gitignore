@@ -31,3 +31,6 @@ npm-debug.log
 
 # DB
 db.sqlite
+
+# .DS_STORE
+.DS_Store
