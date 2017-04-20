@@ -3,7 +3,7 @@ var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
-var api_v0_1 = require('./routes/v0_1');
+var api_v1 = require('./routes/v1');
 
 var app = express();
 
@@ -14,7 +14,7 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 
-app.use('/api/v0.1', api_v0_1);
+app.use('/api/v1', api_v1);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

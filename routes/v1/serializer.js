@@ -1,5 +1,5 @@
 const serializer = {
-  marshalUser (user) {
+  MarshalUser (user) {
     return {
       id: user.id,
       username: user.username,

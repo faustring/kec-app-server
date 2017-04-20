@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
 
-const user = require('./user')
+const userView = require('./userView')
 
-router.use('/users', user)
+router.use('/users', userView)
 
 module.exports = router
