@@ -13,6 +13,9 @@ $ yarn start
 $ yarn doc
 ```
 
+## API Specification
+- refs [apidoc](https://github.com/faustring/kec-app-server/blob/master/apidoc/index.html)
+
 ## TODO
 - [ ] authentication with [JWT](https://jwt.io/)
 - [ ] edit user information
