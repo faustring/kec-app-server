@@ -1,6 +1,6 @@
 {
   "name": "kec-app-server",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "body-parser": "~1.17.1",
-    "co-express": "^2.0.0",
     "debug": "~2.6.3",
     "ejs": "~2.5.6",
     "express": "~4.15.2",
@@ -17,5 +16,10 @@
     "sequelize": "^3.30.4",
     "sqlite3": "^3.1.8",
     "tcomb-validation": "^3.3.0"
-  }
+  },
+  "description": "API server of KEC which is written version with Node.js",
+  "main": "index.js",
+  "repository": "https://github.com/faustring/kec-app-server.git",
+  "author": "ClaudeSeo <ehdaudtj@gmail.com>",
+  "license": "MIT"
 }
