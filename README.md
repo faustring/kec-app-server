@@ -14,10 +14,10 @@ $ yarn doc
 ```
 
 ## TODO
-- [] authentication with [JWT](https://jwt.io/)
-- [] edit user information
-- [] get karaoke list
-- [] add review for karaoke
-- [] user ranking system
-- [] api versioning
-- [] unit test
+- [ ] authentication with [JWT](https://jwt.io/)
+- [ ] edit user information
+- [ ] get karaoke list
+- [ ] add review for karaoke
+- [ ] user ranking system
+- [ ] api versioning
+- [ ] unit test
