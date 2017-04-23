@@ -72,6 +72,103 @@ router.get('/:id', wrap(async (req, res, next) => {
   return user ? res.status(200).json(serializer.marshalUser(user)) : res.status(404).json(ERROR_CODE.user.Unknown)
 }))
 
+router.put('/:id', wrap(async (req, res, next) => {
+  /**
+   * @api {put} /users/:id Edit user information
+   * @apiVersion 1.0.0
+   * @apiName editUser
+   * @apiGroup User
+   * 
+   * @apiParamExample {json} Request-Example:
+   *  {
+   *    "id": 4711,
+   *    "username": "xxx",
+   *    "propic": "http://..."
+   *  }
+   * 
+   * @apiSuccessExample {json} Success-Response:
+   *  HTTP/1.1 200 OK
+   *  {
+   *    id: 1,
+   *    username: 'faustring',
+   *    email: 'admin@faustring.com',
+   *    propic: 'http://...',
+   *    is_admin: true,
+   *    create_ts: 1491484731
+   *  }
+   * 
+   * @apiErrorExample {json} Error-Response:
+   *  HTTP/1.1 400 BAD REQUEST
+   *  {
+   *    "code":10003,
+   *    "message":"파라메터가 잘못되었습니다."
+   *  }
+   * 
+   *  @apiErrorExample {json} Error-Response:
+   *  HTTP/1.1 401 UNAUTHORIZED
+   *  {
+   *    "code":20001,
+   *    "message":"유효하지 않은 토큰입니다."
+   *  }
+   * 
+   *  @apiErrorExample {json} Error-Response:
+   *  HTTP/1.1 403 FORBIDDEN
+   *  {
+   *    "code":20006,
+   *    "message":"권한이 없습니다."
+   *  }
+   * 
+   * @apiErrorExample {json} Error-Response:
+   *  HTTP/1.1 404 NOT FOUND
+   *  {
+   *    "code":30001,
+   *    "message":"존재하지 않는 사용자입니다."
+   *  }
+   */
+  const userId = parseInt(req.params.id)
+  if (isNaN(userId) || !t.validate(userId, domain.Positive).isValid()) {
+    return res.status(400).json(ERROR_CODE.common.InvalidParameter)
+  }
+  if(!req.is('application/json')) {
+    return res.status(406).json(ERROR_CODE.common.NotAcceptable)
+  }
+  if (userId !== req.auth._id) {
+    return res.status(403).json(ERROR_CODE.auth.Forbidden)
+  }
+  const body = req.body
+  const result = t.validate(body, domain.EditUser)
+  if (result.isValid()) {
+    const user = await UserService.find({id: userId})
+    if (!user) {
+      return res.status(404).json(ERROR_CODE.user.Unknown)
+    }
+    user.update(body).then(() => {
+        return res.status(200).json(serializer.marshalUser(user))
+    }).catch((error) => {
+      if (error.name === 'SequelizeUniqueConstraintError') {
+        return res.status(400).json(ERROR_CODE.user.NameDuplicated)
+      } else {
+        return res.status(500).json(ERROR_CODE.common.Unknown)
+      }
+    })
+  } else {
+    let error = null
+    switch (result.firstError().path[0]) {
+      case 'username':
+        error = ERROR_CODE.user.NameRequired
+        break
+      case 'propic':
+        error = ERROR_CODE.user.InvalidURLFormat
+        error.source = 'propic'
+        break
+      default:
+        error = ERROR_CODE.common.InvalidParameter
+        break
+    }
+    return res.status(400).json(error)
+  }
+}))
+
 router.post('', wrap(async (req, res, next) => {
   /**
    * @api {post} /users Register User
@@ -145,7 +242,7 @@ router.post('', wrap(async (req, res, next) => {
       ]
     })
     if (user) {
-      return res.status(400).json(ERROR_CODE.user.Duplicated)
+      return res.status(400).json(ERROR_CODE.user.EmailDuplicated)
     }
     const result = await UserService.create(body.email, body.username, body.oauth_provider, body.oauth_provider_id)
     return result ? res.status(201).json(serializer.marshalUser(user.dataValues)) : res.status(500).json(ERROR_CODE.common.Unknown)
@@ -153,17 +250,17 @@ router.post('', wrap(async (req, res, next) => {
     let error = null
     switch (result.firstError().path[0]) {
       case 'email':
-        error = ErrorCode.user.EmailRequired
+        error = ERROR_CODE.user.EmailRequired
         break
       case 'username':
-        error = ErrorCode.user.NameRequired
+        error = ERROR_CODE.user.NameRequired
         break
       case 'oauth_provider':
       case 'oauth_provider_id':
-        error = ErrorCode.user.OauthProviderRequired
+        error = ERROR_CODE.user.OauthProviderRequired
         break
       default:
-        error = ErrorCode.common.InvalidParameter
+        error = ERROR_CODE.common.InvalidParameter
         break
     }
     return res.status(400).json(error)

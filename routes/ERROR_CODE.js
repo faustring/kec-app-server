@@ -63,13 +63,21 @@ module.exports = {
       code: 30004,
       message: 'SNS 인증은 필수입니다.'
     },
-    Duplicated: {
+    EmailDuplicated: {
       code: 30005,
       message: '이미 등록된 사용자입니다.'
     },
     InvalidOauthProvider: {
       code: 30006,
       message: '잘못된 SNS 인증입니다.'
+    },
+    InvalidURLFormat: {
+      code: 30007,
+      message: 'URL 형식이 일치하지 않습니다.'
+    },
+    NameDuplicated: {
+      code: 30008,
+      message: '중복된 닉네임이 존재합니다.'
     }
   }
 }
