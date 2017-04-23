@@ -78,7 +78,7 @@ router.get('/:id', wrap(async (req, res, next) => {
 
 router.put('/:id', wrap(async (req, res, next) => {
   /**
-   * @api {put} /users/:id Edit user information
+   * @api {put} /users/:id Edit User information
    * @apiVersion 1.0.0
    * @apiName editUser
    * @apiGroup User
@@ -106,6 +106,13 @@ router.put('/:id', wrap(async (req, res, next) => {
    *  {
    *    "code":10003,
    *    "message":"파라메터가 잘못되었습니다."
+   *  }
+   * 
+   * @apiErrorExample {json} Error-Response:
+   *  HTTP/1.1 400 BAD REQUEST
+   *  {
+   *    "code":30008,
+   *    "message":"중복된 닉네임이 존재합니다."
    *  }
    * 
    *  @apiErrorExample {json} Error-Response:
