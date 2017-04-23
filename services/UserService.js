@@ -1,4 +1,4 @@
-const ERROR_CODE = require('../routes/v1/ERROR_CODE')
+const ERROR_CODE = require('../routes/ERROR_CODE')
 const db = require('../models')
 
 function currentTime() {

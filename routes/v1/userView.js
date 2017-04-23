@@ -5,9 +5,11 @@ const t = require('tcomb-validation')
 const {wrap} = require('./util')
 const serializer = require('./serializer')
 const domain = require('./domain')
-const ERROR_CODE = require('./ERROR_CODE')
+const ERROR_CODE = require('../ERROR_CODE')
 const UserService = require('../../services/UserService')
+const authMiddleware = require('../../middlewares/authMiddleware')
 
+router.use('/:id', authMiddleware)
 router.get('/:id', wrap(async (req, res, next) => {
   /**
    * @api {get} /users/:id Request User Information
@@ -38,10 +40,24 @@ router.get('/:id', wrap(async (req, res, next) => {
    *    "message":"파라메터가 잘못되었습니다."
    *  }
    * 
+   *  @apiErrorExample {json} Error-Response:
+   *  HTTP/1.1 401 UNAUTHORIZED
+   *  {
+   *    "code":20001,
+   *    "message":"유효하지 않은 토큰입니다."
+   *  }
+   * 
+   *  @apiErrorExample {json} Error-Response:
+   *  HTTP/1.1 403 FORBIDDEN
+   *  {
+   *    "code":20006,
+   *    "message":"권한이 없습니다."
+   *  }
+   * 
    * @apiErrorExample {json} Error-Response:
    *  HTTP/1.1 404 NOT FOUND
    *  {
-   *    "code":20001,
+   *    "code":30001,
    *    "message":"존재하지 않는 사용자입니다."
    *  }
    */
@@ -49,8 +65,11 @@ router.get('/:id', wrap(async (req, res, next) => {
   if (isNaN(userId) || !t.validate(userId, domain.Positive).isValid()) {
     return res.status(400).json(ERROR_CODE.common.InvalidParameter)
   }
+  if (userId !== req.auth._id) {
+    return res.status(403).json(ERROR_CODE.auth.Forbidden)
+  }
   const user = await UserService.find({id: userId})
-  return user ? res.status(200).json(serializer.MarshalUser(user)) : res.status(404).json(ERROR_CODE.user.Unknown)
+  return user ? res.status(200).json(serializer.marshalUser(user)) : res.status(404).json(ERROR_CODE.user.Unknown)
 }))
 
 router.post('', wrap(async (req, res, next) => {
@@ -65,7 +84,7 @@ router.post('', wrap(async (req, res, next) => {
    *    "email": "xxx@xxx.com",
    *    "name": "xxx",
    *    "oauth_provider": "facebook",
-   *    "oauth_provider_id": "access_token"
+   *    "oauth_provider_id": "12345"
    *  }
    * 
    * @apiSuccessExample {json} Success-Response:
@@ -82,14 +101,14 @@ router.post('', wrap(async (req, res, next) => {
    * @apiErrorExample {json} Error-Response:
    *  HTTP/1.1 400 BAD REQUEST
    *  {
-   *    "code":20002,
+   *    "code":30002,
    *    "message":"이메일은 필수입니다."
    *  }
    * 
    * @apiErrorExample {json} Error-Response:
    *  HTTP/1.1 400 BAD REQUEST
    *  {
-   *    "code":20005,
+   *    "code":30005,
    *    "message":"이미 등록된 사용자입니다."
    *  }
    * 
@@ -106,6 +125,7 @@ router.post('', wrap(async (req, res, next) => {
   const body = req.body
   const result = t.validate(body, domain.RegisterUser)
   if (result.isValid()) {
+    // TODO oauth validation check
     const user = await UserService.find({
       '$or': [
         {
@@ -128,7 +148,7 @@ router.post('', wrap(async (req, res, next) => {
       return res.status(400).json(ERROR_CODE.user.Duplicated)
     }
     const result = await UserService.create(body.email, body.username, body.oauth_provider, body.oauth_provider_id)
-    return result ? res.status(201).json(serializer.MarshalUser(user.dataValues)) : res.status(500).json(ERROR_CODE.common.Unknown)
+    return result ? res.status(201).json(serializer.marshalUser(user.dataValues)) : res.status(500).json(ERROR_CODE.common.Unknown)
   } else {
     let error = null
     switch (result.firstError().path[0]) {

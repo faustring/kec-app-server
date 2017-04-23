@@ -20,7 +20,9 @@ const authMiddleware = (req, res, next) => {
 
   const errorHandler = (error) => {
     let errorMessage = ERROR_CODE.auth.InvalidToken
-    errorMessage.reason = error.message
+    if (error.name === 'TokenExpiredError') {
+      errorMessage = ERROR_CODE.auth.ExpiredToken
+    }
     return res.status(401).json(errorMessage)
   }
 

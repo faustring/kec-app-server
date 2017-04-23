@@ -1,5 +1,6 @@
 {
   "development": {
+    "jwt_secret": "2312f3d8259930872b363abc2a2b58b0",
     "database": {
       "database": "",
       "username": "",
@@ -11,6 +12,7 @@
     }
   },
   "production": {
+    "jwt_secret": "d05acb71ba46e6017e0dce18c2957e2e",
     "database": {
       "database": "faustring",
       "username": "faustring",

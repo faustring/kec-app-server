@@ -20,9 +20,16 @@ const RegisterUser = t.struct({
   oauth_access_token: t.maybe(t.String)
 })
 
+const Authorize = t.struct({
+  oauth_provider: Oauth,
+  oauth_provider_id: t.String,
+  oauth_access_token: t.maybe(t.String)
+})
+
 module.exports = {
   Email,
   Oauth,
   RegisterUser,
-  Positive
+  Positive,
+  Authorize
 }

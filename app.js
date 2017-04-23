@@ -4,8 +4,11 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 
 var api_v1 = require('./routes/v1');
+var config = require('./config')[process.env.NODE_ENV]
 
 var app = express();
+
+app.set('JWT_SCRECT', config.jwt_secret)
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
