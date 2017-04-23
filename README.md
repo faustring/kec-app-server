@@ -3,13 +3,13 @@ API server of KEC which is written version with Node.js
 
 ## Usage
 ```bash
-// install dependencies
+# install dependencies
 $ yarn
 
-// serve at localhost:3000
+# serve at localhost:3000
 $ yarn start
 
-// generate api document
+# generate api document
 $ yarn doc
 ```
 
