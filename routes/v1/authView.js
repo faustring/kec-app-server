@@ -30,7 +30,8 @@ router.post('/authentication', wrap(async (req, res, next) => {
    *    "id": 1,
    *    "propic": "",
    *    "is_admin": false,
-   *    "access_token": "..."
+   *    "access_token": "...",
+   *    "last_login_ts": 0
    *  }
    * 
    * @apiErrorExample {json} Error-Response:
@@ -78,7 +79,7 @@ router.post('/authentication', wrap(async (req, res, next) => {
         _id: user.id,
         email: user.email,
         username: user.username,
-        is_admin: user.is_admin,
+        is_admin: user.is_admin
       }, 
       req.app.get('JWT_SCRECT'),
       {
@@ -89,13 +90,17 @@ router.post('/authentication', wrap(async (req, res, next) => {
         resolve(token) 
       })
     })
-    p.then((token) => {
+    p.then((token) => {      
       data = {
         id: user.id,        
         propic: user.propic,
         is_admin: user.is_admin,
-        access_token: token
+        access_token: token,
+        last_login_ts: user.last_login_ts
       }
+      user.update({
+        last_login_ts: new Date().getTime() / 1000
+      })
       return res.status(200).json(data)
     }).catch((error) => {
       return res.status(500).json(ERROR_CODE.common.Unknown)
