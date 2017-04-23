@@ -69,7 +69,11 @@ router.get('/:id', wrap(async (req, res, next) => {
     return res.status(403).json(ERROR_CODE.auth.Forbidden)
   }
   const user = await UserService.find({id: userId})
-  return user ? res.status(200).json(serializer.marshalUser(user)) : res.status(404).json(ERROR_CODE.user.Unknown)
+  if (user) {
+    return res.status(200).json(serializer.marshalUser(user))
+  } else {
+    return res.status(404).json(ERROR_CODE.user.Unknown)
+  }
 }))
 
 router.put('/:id', wrap(async (req, res, next) => {
